@@ -11,13 +11,13 @@ const options = {
       radius: 0,
     },
   },
-  maintanAspectRatio: false,
+  maintainAspectRatio: false,
   tooltips: {
     mode: "index",
     intersect: false,
     callbacks: {
       label: function (tooltipItem, data) {
-        return numeral(tooltipItem.value).format("+0, 0");
+        return numeral(tooltipItem.value).format("+0,0");
       },
     },
   },
@@ -37,6 +37,7 @@ const options = {
           display: false,
         },
         ticks: {
+          // Include a dollar sign in the ticks
           callback: function (value, index, values) {
             return numeral(value).format("0a");
           },
@@ -46,39 +47,44 @@ const options = {
   },
 };
 
-const buildChartData = (data, casesType = "cases") => {
-  const chartData = [];
+const buildChartData = (data, casesType) => {
+  let chartData = [];
   let lastDataPoint;
   for (let date in data.cases) {
     if (lastDataPoint) {
-      const newDataPoint = {
+      let newDataPoint = {
         x: date,
         y: data[casesType][date] - lastDataPoint,
       };
       chartData.push(newDataPoint);
     }
-    lastDataPoint = data[`cases`][date];
+    lastDataPoint = data[casesType][date];
   }
   return chartData;
 };
 
-function LineGraph({ casesType = "cases", ...props }) {
+function LineGraph({ casesType }) {
   const [data, setData] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
       await fetch("https://disease.sh/v3/covid-19/historical/all?lastdays=120")
-        .then((response) => response.json())
+        .then((response) => {
+          return response.json();
+        })
         .then((data) => {
           let chartData = buildChartData(data, casesType);
           setData(chartData);
+          console.log(chartData);
+          // buildChart(chartData);
         });
     };
+
     fetchData();
   }, [casesType]);
 
   return (
-    <div className={props.className}>
+    <div>
       {data?.length > 0 && (
         <Line
           data={{
