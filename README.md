@@ -3,6 +3,8 @@
 ## **[Packages Used]()**
 
 - [material-ui](https://material-ui.com/)
+- [react-chartjs-2](https://www.npmjs.com/package/react-chartjs-2)
+- [numeral](https://www.npmjs.com/package/numeral)
 
 ## **[APIs Used]()**
 
